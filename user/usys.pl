@@ -36,7 +36,5 @@ entry("getpid");
 entry("sbrk");
 entry("sleep");
 entry("uptime");
-
-
-# sysinfo adding entry
+entry("trace");
 entry("sysinfo");

@@ -25,6 +25,7 @@ int getpid(void);
 char *sbrk(int);
 int sleep(int);
 int uptime(void);
+int trace(int);
 
 // lab02: sysinfor adding prototype
 int sysinfo(struct sysinfo *);

@@ -1,0 +1,20 @@
+Q1: Hàm usertrap() nằm ở kernel/trap.c đã gọi syscall() tại địa chỉ 0x0000000080001f42.
+
+Q2: Giá trị của p->trapframe->a7 là 7. Giá trị này là của SYS_exec, được lưu tại syscall.h
+
+Q3: Mode trước đó của CPU là user mode.
+
+Q4: 
+panik:
+    xv6 kernel is booting
+
+    hart 2 starting
+    hart 1 starting
+    scause=0xd sepc=0x80001c92 stval=0x0
+    panic: kerneltrap
+Kiểm tra bằng sepc trong kernel/kernel.asm
+thanh ghi a3 tương ứng với biến num
+
+Q5: Đặt breakpoint ở giá trị sepc=0x00000000800020b6 và kiểm tra scause sau khi kernel panic là 13
+Theo hướng dẫn của RISC-V, giá trị 13 ở đây biểu thị lỗi trang tải. Đặc biệt, đã xảyra lỗi khi tải dữ liệu từ địa chỉ bộ nhớ 0 vào s2. 
+Như chúng ta có thể thấy trong sách giáo trình, địa chỉ 0 không ánh xạ tới không gian kernel; đúng hơn, nó bắt đầu ở địa chỉ ảo 0x80000000.
