@@ -1,4 +1,8 @@
-struct sysinfo {
-  uint64 freemem;   // amount of free memory (bytes)
-  uint64 nproc;     // number of process
+struct sysinfo
+{
+  uint64 freemem; // amount of free memory (bytes)
+  uint64 nproc;   // number of process
 };
+
+uint64 free_memory(void);
+int count_active_processes(void);

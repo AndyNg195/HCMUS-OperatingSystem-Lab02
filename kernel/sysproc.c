@@ -6,13 +6,38 @@
 #include "spinlock.h"
 #include "proc.h"
 
+// Include sysinfo library.
+#include "sysinfo.h"
+
+uint64 sys_sysinfo(void)
+{
+  uint64 addr; // Địa chỉ của struct sysinfo trong không gian người dùng
+
+  // Gọi argaddr và kiểm tra địa chỉ
+  argaddr(0, &addr);
+  return sysinfo(addr);
+}
+int sysinfo(uint64 addr)
+{
+  struct sysinfo info;
+
+  // Thu thập thông tin hệ thống
+  info.freemem = free_memory();
+  info.nproc = count_active_processes();
+
+  // Sao chép thông tin từ kernel sang không gian người dùng
+  if (copyout(myproc()->pagetable, addr, (char *)&info, sizeof(info)) < 0)
+    return -1;
+
+  return 0;
+}
 uint64
 sys_exit(void)
 {
   int n;
   argint(0, &n);
   exit(n);
-  return 0;  // not reached
+  return 0; // not reached
 }
 
 uint64
@@ -43,7 +68,7 @@ sys_sbrk(void)
 
   argint(0, &n);
   addr = myproc()->sz;
-  if(growproc(n) < 0)
+  if (growproc(n) < 0)
     return -1;
   return addr;
 }
@@ -55,12 +80,14 @@ sys_sleep(void)
   uint ticks0;
 
   argint(0, &n);
-  if(n < 0)
+  if (n < 0)
     n = 0;
   acquire(&tickslock);
   ticks0 = ticks;
-  while(ticks - ticks0 < n){
-    if(killed(myproc())){
+  while (ticks - ticks0 < n)
+  {
+    if (killed(myproc()))
+    {
       release(&tickslock);
       return -1;
     }
